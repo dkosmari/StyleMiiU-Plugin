@@ -408,7 +408,7 @@ ON_APPLICATION_START() {
             }
 
             if (!enabledThemes.empty() && gThemeManagerEnabled) {
-                unsigned seed = static_cast<unsigned int>(time(0));
+                unsigned seed = static_cast<unsigned int>(OSGetTime());
                 std::mt19937 rng(seed);
                 std::shuffle(enabledThemes.begin(), enabledThemes.end(), rng);
                 size_t randomIndex = rng() % enabledThemes.size();
