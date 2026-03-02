@@ -6,7 +6,7 @@ Developed intending to straight forward as much as possible the process of apply
 
 **No system file is modified by this plugin.**
 
-Codebase is heavily based on SDCafiine's base.
+This plugin's codebase is heavily based on SDCafiine.
 
 ## Installation
 
@@ -24,11 +24,12 @@ Themes will only load from the `SD:/wiiu/themes` directory, it is recommended th
 
 A step to step guide on how to use it:
 1. Open the WUPS menu (**L + ↓ + SELECT**) and enter the **StyleMiiU** menu. Make sure StyleMiiU is enabled, otherwise it won't do anything.
-2. Enter the **Available Themes** option and you should see the folders that are in `SD:/wiiu/themes/` (Or `SD:/wiiu/sdcafiine/` in case no themes folder exist), showing up empty if no theme is present. Once there, set whatever theme you want to Current Theme. If no theme it's set, the Wii U's default home menu will be loaded.
+2. Enter the **Available Themes** option and you should see the folders that are in `SD:/wiiu/themes/`, showing up empty if no theme is present. Once there, set whatever theme you want to Current Theme. If no theme it's set, the Wii U's default home menu will be loaded.
 3. Once you exit the WUPS menu, the Home Menu should restart and once it gets restarted, your Home Menu will now have the theme you chose applied to it.
 
 Additional options:
-- Shuffle themes: This option tries to mimic the 3DS' option of shuffling themes, you can use it by simply activating the option and then in **Available Themes**, select the themes you want to shuffle through. The themes will change **every time you restart the console or enter and exit to the menu**. If you disable this option, then the last theme you selected will become the default theme for it to fallback on.
+- Shuffle themes: This option tries to mimic the 3DS' option of shuffling themes, you can use it by simply activating the option and then in **Available Themes**, select the themes you want to shuffle through. The themes will change **every time you restart the console or exiting back to the menu**. If you disable this option, then the last theme you selected will become the default theme for it to fallback on.
+- Mashup themes: This option makes the themes get mixed with each other every time you restart the console or enter and exit to the menu, providing mixes of music, themes and even miscellaneous stuff like the Wii cursor. *Shuffle themes must also be enabled for this to work.*
 
 ## Troubleshooting
 

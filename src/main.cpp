@@ -427,11 +427,14 @@ void HandleThemes()
     std::string cafeBaristaPath = "";
     std::string contentPath = "";
 
+    std::string menPackTheme = "";
+    std::string men2Theme = "";
+    std::string cafeBaristaTheme = "";
+
     if (gMashupThemes && gShuffleThemes)
     {
         std::string tempMenPack, tempMen2Pack, tempCafeBarista;
 
-        std::string menPackTheme;
         int attempts = 0;
         const int maxAttempts = enabledThemes.size() * 2;
         
@@ -466,6 +469,7 @@ void HandleThemes()
             
             if (!tempMen2Pack.empty()) {
                 men2PackPath = tempMen2Pack;
+                men2Theme = enabledThemes[randomIndex];
                 break;
             }
             attempts++;
@@ -484,6 +488,7 @@ void HandleThemes()
             
             if (!tempCafeBarista.empty()) {
                 cafeBaristaPath = tempCafeBarista;
+                cafeBaristaTheme = enabledThemes[randomIndex];
                 break;
             }
             attempts++;
@@ -518,13 +523,38 @@ void HandleThemes()
     }
 
     if(success && notificationsEnabled){
-        if(gMashupThemes)
-            return;
         auto res = NotificationModule_SetDefaultValue(NOTIFICATION_MODULE_NOTIFICATION_TYPE_INFO,
                                             NOTIFICATION_MODULE_DEFAULT_OPTION_DURATION_BEFORE_FADE_OUT, 12.0f);
         if(res != NOTIFICATION_MODULE_RESULT_SUCCESS) return;
-
+        
         std::string text = "Theme: ";
+        if(gMashupThemes){ 
+            if(!contentPath.empty()){
+                text = "Content: ";
+                text.append(menPackTheme);
+                NotificationModule_AddInfoNotification(text.c_str());
+            }
+
+            if(!cafeBaristaPath.empty()){
+                text = "cafe_barista_men.bfsar: ";
+                text.append(cafeBaristaTheme);
+                NotificationModule_AddInfoNotification(text.c_str());
+            }
+
+            if(!men2PackPath.empty()){
+                text = "Men2.pack: ";
+                text.append(men2Theme);
+                NotificationModule_AddInfoNotification(text.c_str());
+            }
+            
+            if(!menPackPath.empty()){ 
+                text = "Men.pack: ";
+                text.append(menPackTheme);
+                NotificationModule_AddInfoNotification(text.c_str());
+            }
+            return;
+        }
+
         text.append(gCurrentTheme);
         NotificationModule_AddInfoNotification(text.c_str());
     }
