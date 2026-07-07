@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <themeSelector.h>
 #include <fs/DirList.h>
+#include <utils/StringTools.h>
 
 #include <notifications/notifications.h>
 #include <content_redirection/redirection.h>
@@ -108,12 +109,11 @@ static void bool_item_callback(ConfigItemBoolean *item, bool newValue) {
         } else {
             std::string storedThemes;
             if (WUPSStorageAPI::Get("enabledThemes", storedThemes) == WUPS_STORAGE_ERROR_SUCCESS) {
-                std::stringstream ss(storedThemes);
-                std::string theme;
-
-                while (std::getline(ss, theme, '|')) {
-                    if (!theme.empty()) {
-                        enabledThemes.push_back(theme);
+                std::vector<std::string> splitThemes = StringTools::stringSplit(storedThemes, "|");
+                for(size_t i = 0; i < splitThemes.size(); i++)
+                {
+                    if (!splitThemes[i].empty()) {
+                        enabledThemes.push_back(splitThemes[i]);
                     }
                 }
             }
@@ -175,11 +175,11 @@ static void theme_bool_item_callback(ConfigItemThemeBool *item, bool newValue) {
         enabledThemes.clear();
         
         if (WUPSStorageAPI::Get("enabledThemes", storedThemes) == WUPS_STORAGE_ERROR_SUCCESS) {
-            std::stringstream ss(storedThemes);
-            std::string theme;
-            while (std::getline(ss, theme, '|')) {
-                if (!theme.empty()) {
-                    enabledThemes.push_back(theme);
+            std::vector<std::string> splitThemes = StringTools::stringSplit(storedThemes, "|");
+            for(size_t i = 0; i < splitThemes.size(); i++)
+            {
+                if (!splitThemes[i].empty()) {
+                    enabledThemes.push_back(splitThemes[i]);
                 }
             }
         }
@@ -253,10 +253,10 @@ static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHa
                 if (storageErr == WUPS_STORAGE_ERROR_SUCCESS && !gFavoriteThemes.empty())
                 {
                     if (gShuffleThemes) {
-                        std::stringstream ss(gFavoriteThemes);
-                        std::string theme;
-                        while (std::getline(ss, theme, '|')) {
-                            if (theme == curTheme) {
+                        std::vector<std::string> splitThemes = StringTools::stringSplit(gFavoriteThemes, "|");
+                        for(size_t i = 0; i < splitThemes.size(); i++)
+                        {
+                            if (splitThemes[i] == curTheme) {
                                 themeEnabled = true;
                                 break;
                             }
@@ -578,12 +578,12 @@ ON_APPLICATION_START() {
 
     if (gShuffleThemes) {
         if((err = WUPSStorageAPI::Get("enabledThemes", gFavoriteThemes)) == WUPS_STORAGE_ERROR_SUCCESS){
-            std::stringstream ss(gFavoriteThemes);
-            std::string theme;
-            while (std::getline(ss, theme, '|')) {
-                enabledThemes.push_back(theme);
+            std::vector<std::string> splitThemes = StringTools::stringSplit(gFavoriteThemes, "|");
+            for(size_t i = 0; i < splitThemes.size(); i++)
+            {
+                enabledThemes.push_back(splitThemes[i]);
             }
-
+            
             if (!enabledThemes.empty() && gThemeManagerEnabled) {
                 size_t randomIndex = get_random_index(enabledThemes.size());
                 gCurrentTheme = enabledThemes[randomIndex];
