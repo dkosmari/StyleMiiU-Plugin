@@ -238,57 +238,53 @@ static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHa
         
         enabledThemes.clear();
 
-        DIR* dir = opendir(theme_directory_path);
-        if (dir != nullptr) {
-            struct dirent* entry;
-            while ((entry = readdir(dir)) != nullptr) {
-                if (entry->d_type == DT_DIR && strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-                    std::string themeDirPath = std::string(theme_directory_path) + "/" + entry->d_name;
+        DirList themeDirList(theme_directory_path, nullptr, DirList::Dirs);
+        themeDirList.SortList();
 
-                    if (isValidThemeDirectory(themeDirPath)) {
-                        bool themeEnabled = false;
+        for(int i = 0; i < themeDirList.GetFilecount(); i++)
+        {
+            std::string curTheme = themeDirList.GetFilename(i);
+            if(curTheme == "." || curTheme == "..")
+                continue;
 
-                        if (storageErr == WUPS_STORAGE_ERROR_SUCCESS && !gFavoriteThemes.empty())
-                        {
-                            if (gShuffleThemes) {
-                                std::stringstream ss(gFavoriteThemes);
-                                std::string theme;
-
-                                while (std::getline(ss, theme, '|')) {
-                                    if (theme == entry->d_name) {
-                                        themeEnabled = true;
-                                        break;
-                                    }
-                                }
-                            } else {
-                                if (gFavoriteThemes == entry->d_name) {
-                                    themeEnabled = true;
-                                }
+            std::string themeDirPath = std::string(theme_directory_path) + "/" + curTheme;
+            if (isValidThemeDirectory(themeDirPath)) {
+                bool themeEnabled = false;
+                if (storageErr == WUPS_STORAGE_ERROR_SUCCESS && !gFavoriteThemes.empty())
+                {
+                    if (gShuffleThemes) {
+                        std::stringstream ss(gFavoriteThemes);
+                        std::string theme;
+                        while (std::getline(ss, theme, '|')) {
+                            if (theme == curTheme) {
+                                themeEnabled = true;
+                                break;
                             }
                         }
-                        
-                        auto configBool = WUPSConfigItemThemeBool::Create(entry->d_name,
-                                                             entry->d_name,
-                                                             false,
-                                                             themeEnabled,
-                                                             theme_bool_item_callback);
-                        themes.add(std::move(configBool));
-
-                        if (themeEnabled) {
-                            enabledThemes.push_back(entry->d_name);
+                    } else {
+                        if (gFavoriteThemes == curTheme) {
+                            themeEnabled = true;
                         }
                     }
                 }
+                
+                auto configBool = WUPSConfigItemThemeBool::Create(curTheme,
+                                                     curTheme,
+                                                     false,
+                                                     themeEnabled,
+                                                     theme_bool_item_callback);
+
+                themes.add(std::move(configBool));
+
+                if (themeEnabled) {
+                    enabledThemes.push_back(curTheme);
+                }
             }
-            closedir(dir);
-        } else {
-            DEBUG_FUNCTION_LINE_ERR("Failed to open theme directory: %s\n", theme_directory_path);
-            return WUPSCONFIG_API_CALLBACK_RESULT_ERROR;
         }
 
         root.add(std::move(themes));
-
-    } catch (std::exception &e) {
+    }
+    catch (std::exception &e) {
         DEBUG_FUNCTION_LINE_ERR("Exception: %s\n", e.what());
         return WUPSCONFIG_API_CALLBACK_RESULT_ERROR;
     }
