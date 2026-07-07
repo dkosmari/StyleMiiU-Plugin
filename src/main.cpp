@@ -308,18 +308,8 @@ static void ConfigMenuClosedCallback() {
     }
 }
 
-INITIALIZE_PLUGIN() {
-    ContentRedirectionStatus error;
-    if ((error = ContentRedirection_InitLibrary()) != CONTENT_REDIRECTION_RESULT_SUCCESS) {
-        DEBUG_FUNCTION_LINE_ERR("Failed to init ContentRedirection. Error %s %d", ContentRedirection_GetStatusStr(error), error);
-        OSFatal("Failed to init ContentRedirection.");
-    }
-    
-    if (NotificationModule_InitLibrary() != NOTIFICATION_MODULE_RESULT_SUCCESS) {
-        DEBUG_FUNCTION_LINE("NotificationModule_InitLibrary failed");
-        notificationsEnabled = false;
-    }
-
+void ReloadConfig()
+{
     WUPSStorageError err;
     if ((err = WUPSStorageAPI::GetOrStoreDefault(THEME_MANAGER_ENABLED_STRING, gThemeManagerEnabled, DEFAULT_THEME_MANAGER_ENABLED)) != WUPS_STORAGE_ERROR_SUCCESS) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get or create item \"%s\": %s (%d)", THEME_MANAGER_ENABLED_STRING, WUPSStorageAPI_GetStatusStr(err), err);
@@ -353,6 +343,21 @@ INITIALIZE_PLUGIN() {
     if ((err = WUPSStorageAPI::SaveStorage()) != WUPS_STORAGE_ERROR_SUCCESS) {
         DEBUG_FUNCTION_LINE_ERR("Failed to save storage: %s (%d)", WUPSStorageAPI_GetStatusStr(err), err);
     }
+}
+
+INITIALIZE_PLUGIN() {
+    ContentRedirectionStatus error;
+    if ((error = ContentRedirection_InitLibrary()) != CONTENT_REDIRECTION_RESULT_SUCCESS) {
+        DEBUG_FUNCTION_LINE_ERR("Failed to init ContentRedirection. Error %s %d", ContentRedirection_GetStatusStr(error), error);
+        OSFatal("Failed to init ContentRedirection.");
+    }
+    
+    if (NotificationModule_InitLibrary() != NOTIFICATION_MODULE_RESULT_SUCCESS) {
+        DEBUG_FUNCTION_LINE("NotificationModule_InitLibrary failed");
+        notificationsEnabled = false;
+    }
+
+    ReloadConfig();
 
     WUPSConfigAPIOptionsV1 configOptions = {.name = "StyleMiiU"};
     WUPSConfigAPIStatus configErr;
@@ -571,6 +576,7 @@ ON_APPLICATION_START() {
     if(!is_wiiu_menu) return;
 
     WUPSStorageAPI::ForceReloadStorage();
+    ReloadConfig();
 
     WUPSStorageError err;
 
