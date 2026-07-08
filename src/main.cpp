@@ -253,7 +253,7 @@ static WUPSConfigAPICallbackStatus ConfigMenuOpenedCallback(WUPSConfigCategoryHa
                         std::vector<std::string> splitThemes = StringTools::stringSplit(gFavoriteThemes, "|");
                         for(size_t i = 0; i < splitThemes.size(); i++)
                         {
-                            if (splitThemes[i] == curTheme) {
+                            if (splitThemes[i] == curTheme && !splitThemes[i].empty()) {
                                 themeEnabled = true;
                                 break;
                             }
@@ -580,7 +580,8 @@ ON_APPLICATION_START() {
             std::vector<std::string> splitThemes = StringTools::stringSplit(gFavoriteThemes, "|");
             for(size_t i = 0; i < splitThemes.size(); i++)
             {
-                enabledThemes.push_back(splitThemes[i]);
+                if(!splitThemes[i].empty())
+                    enabledThemes.push_back(splitThemes[i]);
             }
             
             if (!enabledThemes.empty() && gThemeManagerEnabled) {
@@ -593,7 +594,7 @@ ON_APPLICATION_START() {
     }
     else {
         if ((err = WUPSStorageAPI::Get("enabledThemes", gFavoriteThemes)) == WUPS_STORAGE_ERROR_SUCCESS) {
-            if(gFavoriteThemes == "")
+            if(gFavoriteThemes.empty())
                 return;
             
             enabledThemes.push_back(gFavoriteThemes);
