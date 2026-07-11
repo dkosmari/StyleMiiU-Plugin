@@ -1,14 +1,17 @@
 #include "globals.h"
-#include "WUPSConfigItemThemeBool.h"
-#include <string>
-#include <sysapp/title.h>
 
 bool gThemeManagerEnabled = DEFAULT_THEME_MANAGER_ENABLED;
 bool gShuffleThemes       = DEFAULT_SHUFFLE_THEMES;
 bool gMashupThemes        = DEFAULT_MASHUP_THEMES;
-std::string gCurrentTheme = "";
-const char* theme_directory_path = "fs:/vol/external01/wiiu/themes/";
+bool gShowNotification    = DEFAULT_SHOW_NOTIFICATION;
 
-ConfigItemThemeBool* gCurrentThemeItem = nullptr;
+std::unordered_set<std::string> gEnabledThemes;
+
+const std::string theme_directory_path = "fs:/vol/external01/wiiu/themes/";
 
 CRLayerHandle gContentLayerHandle = 0;
+
+std::string gLoadedTheme;
+std::string gLoadedMenTheme;
+std::string gLoadedMen2Theme;
+std::string gLoadedCafeBaristaTheme;
