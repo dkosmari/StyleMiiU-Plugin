@@ -26,20 +26,22 @@ WUMS_ROOT := $(DEVKITPRO)/wums
 #-------------------------------------------------------------------------------
 TARGET		:=	stylemiiu
 BUILD		:=	build
-SOURCES		:=	src src/utils src/fs src/utils/ModifiedWUPS
+SOURCES		:=	src \
+			src/utils \
+			src/wupsext
 DATA		:=	data
-INCLUDES	:=	src src/utils src/fs src/utils/ModifiedWUPS
+INCLUDES	:=	src
 
 #-------------------------------------------------------------------------------
 # options for code generation
 #-------------------------------------------------------------------------------
 
-CXX += -std=c++20
+CXX += -std=c++23
 
-CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
+CFLAGS	:=	-g -Wall -Os -ffunction-sections -fdata-sections \
 			$(MACHDEP)
 
-CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__WUT__ -D__WUPS__ 
+CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__WUT__ -D__WUPS__
 
 CXXFLAGS	:= $(CFLAGS)
 
