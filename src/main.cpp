@@ -396,6 +396,9 @@ void HandleThemes() {
     gLoadedMen2Theme.clear();
     gLoadedCafeBaristaTheme.clear();
 
+    if (!gThemeManagerEnabled)
+        return;
+
     if (gEnabledThemes.empty()) {
         DEBUG_FUNCTION_LINE_WARN("no themes enabled");
         return;
@@ -540,9 +543,6 @@ ON_APPLICATION_START() {
     WUPSStorageAPI::ForceReloadStorage();
 
     ReloadConfig();
-
-    if (!gThemeManagerEnabled)
-        return;
 
     HandleThemes();
 }
