@@ -1,17 +1,14 @@
 #include "themeSelector.h"
 #include "globals.h"
 #include <content_redirection/redirection.h>
-#include <cstdarg>
-#include <cstdio>
 #include <cstring>
-#include <dirent.h>
-#include <malloc.h>
-#include <map>
 #include <string>
 #include <utils/logger.h>
-#include <wups/storage.h>
 
-bool ReplaceContent(const std::string men, const std::string men2, const std::string cafeBarista, const std::string contentExtraPath) {
+bool ReplaceContent(const std::string& men,
+                    const std::string& men2,
+                    const std::string& cafeBarista,
+                    const std::string& contentExtraPath) {
     std::string layerName = "StyleMiiU /vol/content";
 
     bool oneRedirect = false;

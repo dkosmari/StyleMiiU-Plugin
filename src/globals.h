@@ -1,7 +1,10 @@
 #pragma once
-#include <content_redirection/redirection.h>
+
+#include <filesystem>
 #include <string>
 #include <unordered_set>
+
+#include <content_redirection/redirection.h>
 
 #define VERSION "v0.5.2+"
 
@@ -20,8 +23,8 @@ extern bool gThemeManagerEnabled;
 extern bool gShuffleThemes;
 extern bool gMashupThemes;
 extern bool gShowNotification;
-extern std::unordered_set<std::string> gEnabledThemes;
-extern const std::string theme_directory_path;
+extern std::unordered_set<std::filesystem::path> gEnabledThemes;
+extern const std::filesystem::path theme_directory_path;
 
 extern std::string gLoadedTheme;
 extern std::string gLoadedMenTheme;

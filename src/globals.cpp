@@ -5,9 +5,9 @@ bool gShuffleThemes       = DEFAULT_SHUFFLE_THEMES;
 bool gMashupThemes        = DEFAULT_MASHUP_THEMES;
 bool gShowNotification    = DEFAULT_SHOW_NOTIFICATION;
 
-std::unordered_set<std::string> gEnabledThemes;
+std::unordered_set<std::filesystem::path> gEnabledThemes;
 
-const std::string theme_directory_path = "fs:/vol/external01/wiiu/themes/";
+const std::filesystem::path theme_directory_path = "fs:/vol/external01/wiiu/themes";
 
 CRLayerHandle gContentLayerHandle = 0;
 

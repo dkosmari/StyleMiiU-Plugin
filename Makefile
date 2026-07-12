@@ -26,7 +26,9 @@ WUMS_ROOT := $(DEVKITPRO)/wums
 #-------------------------------------------------------------------------------
 TARGET		:=	stylemiiu
 BUILD		:=	build
-SOURCES		:=	src src/utils src/fs src/wupsext
+SOURCES		:=	src \
+			src/utils \
+			src/wupsext
 DATA		:=	data
 INCLUDES	:=	src
 
@@ -36,10 +38,10 @@ INCLUDES	:=	src
 
 CXX += -std=c++23
 
-CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
+CFLAGS	:=	-g -Wall -Os -ffunction-sections -fdata-sections \
 			$(MACHDEP)
 
-CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__WUT__ -D__WUPS__ -DDEBUG -DVERBOSE_DEBUG
+CFLAGS	+=	$(INCLUDE) -D__WIIU__ -D__WUT__ -D__WUPS__
 
 CXXFLAGS	:= $(CFLAGS)
 
