@@ -11,6 +11,12 @@ extern "C" {
 #define LOG_APP_TYPE "P"
 #define LOG_APP_NAME "StyleMiiU"
 
+#define ANSI_RESET "\e[0m"
+
+#define INFO_PREFIX    "\e[1;7;34m" "INFO"
+#define WARN_PREFIX    "\e[1;7;33m" "WARN"
+#define ERROR_PREFIX   "\e[1;7;31m" "ERROR"
+
 #define __FILENAME__ ({                                \
     const char *__filename = __FILE__;                 \
     const char *__pos      = strrchr(__filename, '/'); \
@@ -27,83 +33,67 @@ extern "C" {
 
 #define LOG_EX(FILENAME, FUNCTION, LINE, LOG_FUNC, LOG_LEVEL, LINE_END, FMT, ...)       \
     do {                                                                                \
-        LOG_FUNC("[(%s)%18s][%23s]%30s@L%04d: " LOG_LEVEL "" FMT "" LINE_END,           \
-                 LOG_APP_TYPE, LOG_APP_NAME, FILENAME, FUNCTION, LINE __VA_OPT__(,)     \
-                 __VA_ARGS__);                                                          \
+    LOG_FUNC("[(%s)%18s][%23s]%30s@L%04d: " LOG_LEVEL ANSI_RESET " " FMT "" LINE_END,   \
+             LOG_APP_TYPE, LOG_APP_NAME, FILENAME, FUNCTION, LINE __VA_OPT__(,)         \
+             __VA_ARGS__);                                                              \
     } while (0)
 
 #ifdef DEBUG
 
 #ifdef VERBOSE_DEBUG
 
-#define DEBUG_FUNCTION_LINE_VERBOSE(...)        \
+#define LOG_VERBOSE(...)                        \
     LOG(WHBLogPrintf, __VA_ARGS__)
 
-#define DEBUG_FUNCTION_LINE_VERBOSE_EX(FILENAME, FUNCTION, LINE, ...)   \
+#define LOG_VERBOSE_EX(FILENAME, FUNCTION, LINE, ...)                   \
     LOG_EX(FILENAME, FUNCTION, LINE, WHBLogPrintf, "", "", __VA_ARGS__)
 
 #else // !VERBOSE_DEBUG
 
-#define DEBUG_FUNCTION_LINE_VERBOSE(...)        \
+#define LOG_VERBOSE(...)                        \
     do {                                        \
         (void)sizeof((__VA_ARGS__));            \
     } while (0)
-#define DEBUG_FUNCTION_LINE_VERBOSE_EX(...)     \
+#define LOG_VERBOSE_EX(...)                     \
     do {                                        \
         (void)sizeof((__VA_ARGS__));            \
     } while (0)
 
 #endif // !VERBOSE_DEBUG
 
-#define DEBUG_FUNCTION_LINE(...)                \
-    LOG(WHBLogPrintf, __VA_ARGS__)
+#define LOG_ERROR(...)                                          \
+    LOG_EX_DEFAULT(WHBLogPrintf, ERROR_PREFIX, "", __VA_ARGS__)
+#define LOG_WARN(...)                                           \
+    LOG_EX_DEFAULT(WHBLogPrintf, WARN_PREFIX, "", __VA_ARGS__)
+#define LOG_INFO(...)                                           \
+    LOG_EX_DEFAULT(WHBLogPrintf, INFO_PREFIX, "", __VA_ARGS__)
 
-#define DEBUG_FUNCTION_LINE_WRITE(...)          \
-    LOG(WHBLogWritef, __VA_ARGS__)
-
-#define DEBUG_FUNCTION_LINE_ERR(...)                            \
-    LOG_EX_DEFAULT(WHBLogPrintf, "##ERROR## ", "", __VA_ARGS__)
-#define DEBUG_FUNCTION_LINE_WARN(...)                           \
-    LOG_EX_DEFAULT(WHBLogPrintf, "##WARN ## ", "", __VA_ARGS__)
-#define DEBUG_FUNCTION_LINE_INFO(...)                           \
-    LOG_EX_DEFAULT(WHBLogPrintf, "##INFO ## ", "", __VA_ARGS__)
-
-#define DEBUG_FUNCTION_LINE_ERR_LAMBDA(FILENAME, FUNCTION, LINE, ...)                   \
-    LOG_EX(FILENAME, FUNCTION, LINE, WHBLogPrintf, "##ERROR## ", "", __VA_ARGS__);
+#define LOG_ERROR_LAMBDA(FILENAME, FUNCTION, LINE, ...)                   \
+    LOG_EX(FILENAME, FUNCTION, LINE, WHBLogPrintf, ERROR_PREFIX, "", __VA_ARGS__);
 
 #else // !DEBUG
 
-#define DEBUG_FUNCTION_LINE_VERBOSE_EX(...)     \
+#define LOG_VERBOSE_EX(...)                     \
     do {                                        \
         (void)sizeof((__VA_ARGS__));            \
     } while (0)
 
-#define DEBUG_FUNCTION_LINE_VERBOSE(...)        \
+#define LOG_VERBOSE(...)                        \
     do {                                        \
         (void)sizeof((__VA_ARGS__));            \
     } while (0)
 
-#define DEBUG_FUNCTION_LINE(...)                \
-    do {                                        \
-        (void)sizeof((__VA_ARGS__));            \
-    } while (0)
+#define LOG_ERROR(...)                                          \
+    LOG_EX_DEFAULT(OSReport, ERROR_PREFIX, "\n", __VA_ARGS__)
 
-#define DEBUG_FUNCTION_LINE_WRITE(...)          \
-    do {                                        \
-        (void)sizeof((__VA_ARGS__));            \
-    } while (0)
+#define LOG_WARN(...)                                           \
+    LOG_EX_DEFAULT(OSReport, WARN_PREFIX, "\n", __VA_ARGS__)
 
-#define DEBUG_FUNCTION_LINE_ERR(...)                            \
-    LOG_EX_DEFAULT(OSReport, "##ERROR## ", "\n", __VA_ARGS__)
+#define LOG_INFO(...)                                           \
+    LOG_EX_DEFAULT(OSReport, INFO_PREFIX, "\n", __VA_ARGS__)
 
-#define DEBUG_FUNCTION_LINE_WARN(...)                           \
-    LOG_EX_DEFAULT(OSReport, "##WARN ## ", "\n", __VA_ARGS__)
-
-#define DEBUG_FUNCTION_LINE_INFO(...)                           \
-    LOG_EX_DEFAULT(OSReport, "##INFO ## ", "\n", __VA_ARGS__)
-
-#define DEBUG_FUNCTION_LINE_ERR_LAMBDA(FILENAME, FUNCTION, LINE, ...) \
-    LOG_EX(FILENAME, FUNCTION, LINE, OSReport, "##ERROR## ", "\n", __VA_ARGS__);
+#define LOG_ERROR_LAMBDA(FILENAME, FUNCTION, LINE, ...)                                 \
+    LOG_EX(FILENAME, FUNCTION, LINE, OSReport, ERROR_PREFIX, "\n", __VA_ARGS__);
 
 #endif
 

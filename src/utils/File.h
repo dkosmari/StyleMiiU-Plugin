@@ -1,8 +1,10 @@
 // -*- mode: c++ -*-
 #pragma once
 
+#include <cstddef>
 #include <cstdio>
 #include <filesystem>
+#include <ranges>
 #include <span>
 
 namespace utils {
@@ -32,11 +34,42 @@ namespace utils {
             noexcept;
 
         bool
-        gets(std::span<char> line)
+        gets(char* dst,
+             std::size_t n)
             noexcept;
 
+        template <std::ranges::contiguous_range R>
+        bool
+        gets(R&& dst)
+            noexcept
+        {
+            std::span s{dst};
+            return gets(s.data(), s.size_bytes());
+        }
+
         std::size_t
-        read(std::span<char> dst);
+        read(void* dst,
+             std::size_t n);
+
+        template <std::ranges::contiguous_range R>
+        std::size_t
+        read(R&& dst)
+        {
+            std::span s{dst};
+            return read(s.data(), s.size_bytes());
+        }
+
+        std::size_t
+        write(const void* src,
+              std::size_t n);
+
+        template <std::ranges::contiguous_range R>
+        std::size_t
+        write(R&& src)
+        {
+            std::span s{src};
+            return write(s.data(), s.size_bytes());
+        }
 
         void
         rewind()

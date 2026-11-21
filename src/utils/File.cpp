@@ -16,6 +16,8 @@ namespace utils {
         throw_from_error(int e,
                          const std::string& msg)
         {
+            if (e == 0)
+                e = EIO; // generic I/O error
             throw std::system_error{e, std::generic_category(), msg};
         }
 
@@ -62,22 +64,32 @@ namespace utils {
     }
 
     bool
-    File::gets(std::span<char> line)
+    File::gets(char* dst,
+               std::size_t n)
         noexcept
     {
-        return std::fgets(line.data(), line.size(), fp);
+        return std::fgets(dst, n, fp);
     }
 
-
     std::size_t
-    File::read(std::span<char> dst)
+    File::read(void* dst,
+               std::size_t n)
     {
-        auto result = std::fread(dst.data(), 1, dst.size(), fp);
+        auto result = std::fread(dst, 1, n, fp);
         if (std::ferror(fp))
-            throw std::runtime_error{"fread() failed"};
+            throw_from_error(errno, "fread() failed");
         return result;
     }
 
+    std::size_t
+    File::write(const void* src,
+                std::size_t n)
+    {
+        auto result = std::fwrite(src, 1, n, fp);
+        if (std::ferror(fp))
+            throw_from_error(errno, "fwrite() failed");
+        return result;
+    }
 
     void
     File::rewind()

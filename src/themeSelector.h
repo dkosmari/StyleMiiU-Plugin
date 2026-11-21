@@ -4,9 +4,13 @@
 #include <filesystem>
 #include <vector>
 
+struct ReplaceParams {
+    std::filesystem::path menPack;
+    std::filesystem::path men2Pack;
+    std::filesystem::path cafeBaristaMenBfsar;
+    std::filesystem::path bgmBfstm;
+    std::filesystem::path contentExtraDir;
+};
+
 bool
-ReplaceContent(const std::filesystem::path& men,
-               const std::filesystem::path& men2,
-               const std::filesystem::path& cafeBarista,
-               const std::filesystem::path& contentExtraPath,
-               const std::vector<std::filesystem::path>& bfstmSet);
+ReplaceContent(const ReplaceParams& args);

@@ -1,26 +1,31 @@
+#include <algorithm>
 #include <string.h>
 
 #include "IgnoreCase.h"
 
-namespace utils {
+namespace utils::IgnoreCase {
 
     bool
-    IgnoreCaseLess::operator ()(const std::filesystem::path& a,
-                                const std::filesystem::path& b)
+    Less::operator ()(std::string_view a,
+                      std::string_view b)
         const noexcept
     {
-        int r = strcasecmp(a.c_str(), b.c_str());
+        auto size = std::min(a.size(), b.size());
+        int r = strncasecmp(a.data(), b.data(), size);
+        if (r == 0)
+            return a.size() < b.size();
         return r < 0;
     }
 
-
     bool
-    IgnoreCaseEqual(const std::filesystem::path& a,
-                    const std::filesystem::path& b)
+    Equal(std::string_view a,
+          std::string_view b)
         noexcept
     {
-        int r = strcasecmp(a.c_str(), b.c_str());
+        if (a.size() != b.size())
+            return false;
+        int r = strncasecmp(a.data(), b.data(), a.size());
         return r == 0;
     }
 
-} // namespace utils
+} // namespace utils::IgnoreCase

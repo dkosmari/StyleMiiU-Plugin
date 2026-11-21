@@ -13,6 +13,7 @@ LIBNOTIFICATIONS_DIR := $(TOPDIR)/external/libnotifications
 WUPS_DIR := $(TOPDIR)/external/WiiUPluginSystem
 WUPS_ROOT := $(WUPS_DIR)
 CAFE_GLYPHS_DIR := $(TOPDIR)/external/cafe_glyphs
+GLAZE_DIR := $(TOPDIR)/external/glaze
 
 include $(WUPS_DIR)/share/wups_rules
 
@@ -33,6 +34,9 @@ SOURCES		:=	src \
 DATA		:=	data
 INCLUDES	:=	src
 
+# Host name for install/uninstall
+WIIU ?= wiiu
+
 #-------------------------------------------------------------------------------
 # options for code generation
 #-------------------------------------------------------------------------------
@@ -42,7 +46,8 @@ CXX += -std=c++23
 CPPFLAGS = 	$(INCLUDE) \
 		-D__WIIU__ \
 		-D__WUT__ \
-		-D__WUPS__
+		-D__WUPS__ \
+		-DGLZ_DISABLE_ALWAYS_INLINE
 
 ifneq ($(DEBUG),)
 CPPFLAGS += -DDEBUG=1
@@ -51,7 +56,7 @@ CPPFLAGS += -DVERBOSE_DEBUG=1
 endif
 endif
 
-CFLAGS	:=	-g \
+CFLAGS	:=	\
 		-Wall -Wextra \
 		-Os \
 		-ffunction-sections \
@@ -61,7 +66,10 @@ CFLAGS	:=	-g \
 CXXFLAGS	:= $(CFLAGS)
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-g $(ARCH) $(RPXSPECS) -Wl,-Map,$(notdir $*.map) $(WUPSSPECS) 
+LDFLAGS	=	-g $(ARCH) $(RPXSPECS) \
+		-Wl,-Map,$(notdir $*.map) \
+		-Wl,--gc-sections \
+		$(WUPSSPECS)
 
 LIBS	:= -lwups -lwut -lcontentredirection -lnotifications
 
@@ -75,6 +83,7 @@ LIBDIRS	:= \
 	$(LIBCONTENTREDIRECTION_DIR) \
 	$(LIBNOTIFICATIONS_DIR) \
 	$(CAFE_GLYPHS_DIR) \
+	$(GLAZE_DIR) \
 	$(WUT_ROOT)
 
 #-------------------------------------------------------------------------------
@@ -122,7 +131,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean all
+.PHONY: $(BUILD) clean all install uninstall clear-cache
 
 #-------------------------------------------------------------------------------
 all: $(BUILD)
@@ -141,6 +150,15 @@ clean:
 	@$(MAKE) --no-print-directory -C $(LIBCONTENTREDIRECTION_DIR) clean TOPDIR=$(LIBCONTENTREDIRECTION_DIR)
 	@$(MAKE) --no-print-directory -C $(LIBNOTIFICATIONS_DIR) clean TOPDIR=$(LIBNOTIFICATIONS_DIR)
 	@$(MAKE) --no-print-directory -C $(WUPS_DIR) clean TOPDIR=$(WUPS_DIR)
+
+install: all
+	curl "ftp://$(WIIU):/fs/vol/external01/wiiu/environments/aroma/plugins/" --upload-file $(OUTPUT).wps
+
+uninstall:
+	curl "ftp://$(WIIU)" --quote "DELE /fs/vol/external01/wiiu/environments/aroma/plugins/$(TARGET).wps"
+
+clear-cache:
+	curl "ftp://$(WIIU)" --quote "DELE /fs/vol/external01/wiiu/themes/stylemiiu.cache"
 
 #-------------------------------------------------------------------------------
 else

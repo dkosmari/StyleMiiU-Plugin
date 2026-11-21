@@ -6,92 +6,88 @@
 
 using namespace std::literals;
 
-bool ReplaceContent(const std::filesystem::path& men,
-                    const std::filesystem::path& men2,
-                    const std::filesystem::path& cafeBarista,
-                    const std::filesystem::path& contentExtraPath,
-                    const std::vector<std::filesystem::path>& bfstmSet) {
-    const auto layerName = "StyleMiiU /vol/content"s;
+bool ReplaceContent(const ReplaceParams& args) {
+    const char* layerName = "StyleMiiU /vol/content";
 
     bool result = false;
 
-    if (!contentExtraPath.empty()) {
-        const auto target = "/vol/content"s;
+    if (!args.contentExtraDir.empty()) {
+        const char* target = "/vol/content";
         auto e = ContentRedirection_AddFSLayerEx(&gContentLayerHandle,
-                                                 layerName.c_str(),
-                                                 target.c_str(),
-                                                 contentExtraPath.c_str(),
+                                                 layerName,
+                                                 target,
+                                                 args.contentExtraDir.c_str(),
                                                  FS_LAYER_TYPE_EX_MERGE_DIRECTORY);
         if (e)
-            DEBUG_FUNCTION_LINE_ERR("Failed to redirect \"%s\" to \"%s\": %s",
-                                    target.c_str(),
-                                    cafeBarista.c_str(),
-                                    ContentRedirection_GetStatusStr(e));
+            LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
+                      target,
+                      args.contentExtraDir.c_str(),
+                      ContentRedirection_GetStatusStr(e));
         else
             result = true;
     }
 
-    if (!men.empty()) {
-        const auto target = "/vol/content/Common/Package/Men.pack"s;
+    if (!args.menPack.empty()) {
+        const char* target = "/vol/content/Common/Package/Men.pack";
         auto e = ContentRedirection_AddFSLayerEx(&gContentLayerHandle,
-                                                 layerName.c_str(),
-                                                 target.c_str(),
-                                                 men.c_str(),
+                                                 layerName,
+                                                 target,
+                                                 args.menPack.c_str(),
                                                  FS_LAYER_TYPE_EX_REPLACE_FILE);
         if (e)
-            DEBUG_FUNCTION_LINE_ERR("Failed to redirect \"%s\" to \"%s\": %s",
-                                    target.c_str(),
-                                    men.c_str(),
-                                    ContentRedirection_GetStatusStr(e));
+            LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
+                      target,
+                      args.menPack.c_str(),
+                      ContentRedirection_GetStatusStr(e));
         else
             result = true;
     }
 
-    if (!men2.empty()) {
-        const auto target = "/vol/content/Common/Package/Men2.pack"s;
+    if (!args.men2Pack.empty()) {
+        const char* target = "/vol/content/Common/Package/Men2.pack";
         auto e = ContentRedirection_AddFSLayerEx(&gContentLayerHandle,
-                                                 layerName.c_str(),
-                                                 target.c_str(),
-                                                 men2.c_str(),
+                                                 layerName,
+                                                 target,
+                                                 args.men2Pack.c_str(),
                                                  FS_LAYER_TYPE_EX_REPLACE_FILE);
         if (e)
-            DEBUG_FUNCTION_LINE_ERR("Failed to redirect \"%s\" to \"%s\": %s",
-                                    target.c_str(),
-                                    men2.c_str(),
-                                    ContentRedirection_GetStatusStr(e));
+            LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
+                      target,
+                      args.men2Pack.c_str(),
+                      ContentRedirection_GetStatusStr(e));
         else
             result = true;
 
     }
 
-    if (!cafeBarista.empty()) {
-        const auto target = "/vol/content/Common/Sound/Men/cafe_barista_men.bfsar"s;
+    if (!args.cafeBaristaMenBfsar.empty()) {
+        const char* target = "/vol/content/Common/Sound/Men/cafe_barista_men.bfsar";
         auto e = ContentRedirection_AddFSLayerEx(&gContentLayerHandle,
-                                                 layerName.c_str(),
-                                                 target.c_str(),
-                                                 cafeBarista.c_str(),
+                                                 layerName,
+                                                 target,
+                                                 args.cafeBaristaMenBfsar.c_str(),
                                                  FS_LAYER_TYPE_EX_REPLACE_FILE);
         if (e)
-            DEBUG_FUNCTION_LINE_ERR("Failed to redirect \"%s\" to \"%s\": %s",
-                                    target.c_str(),
-                                    cafeBarista.c_str(),
-                                    ContentRedirection_GetStatusStr(e));
+            LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
+                      target,
+                      args.cafeBaristaMenBfsar.c_str(),
+                      ContentRedirection_GetStatusStr(e));
         else
             result = true;
     }
 
-    for (const auto& bfstm : bfstmSet) {
-        auto target = "/vol/content/Common/Sound/Men/stream" / bfstm.filename();
+    if (!args.bgmBfstm.empty()) {
+        const char* target = "/vol/content/Common/Sound/Men/BGM.bfstm";
         auto e = ContentRedirection_AddFSLayerEx(&gContentLayerHandle,
-                                                 layerName.c_str(),
-                                                 target.c_str(),
-                                                 bfstm.c_str(),
+                                                 layerName,
+                                                 target,
+                                                 args.bgmBfstm.c_str(),
                                                  FS_LAYER_TYPE_EX_REPLACE_FILE);
         if (e)
-            DEBUG_FUNCTION_LINE_ERR("Failed to redirect \"%s\" to \"%s\": %s",
-                                    target.c_str(),
-                                    bfstm.c_str(),
-                                    ContentRedirection_GetStatusStr(e));
+            LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
+                      target,
+                      args.bgmBfstm.c_str(),
+                      ContentRedirection_GetStatusStr(e));
         else
             result = true;
     }

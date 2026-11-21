@@ -1,25 +1,28 @@
 #ifdef DEBUG
-#include <stdint.h>
+
 #include <whb/log_cafe.h>
 #include <whb/log_module.h>
 #include <whb/log_udp.h>
 
-uint32_t moduleLogInit = false;
-uint32_t cafeLogInit   = false;
-uint32_t udpLogInit    = false;
-#endif // DEBUG
+#include "logger.h"
 
-void initLogging() {
-#ifdef DEBUG
+namespace {
+    bool moduleLogInit = false;
+    bool cafeLogInit   = false;
+    bool udpLogInit    = false;
+
+}
+
+void initLogging()
+{
     if (!(moduleLogInit = WHBLogModuleInit())) {
         cafeLogInit = WHBLogCafeInit();
         udpLogInit  = WHBLogUdpInit();
     }
-#endif // DEBUG
 }
 
-void deinitLogging() {
-#ifdef DEBUG
+void deinitLogging()
+{
     if (moduleLogInit) {
         WHBLogModuleDeinit();
         moduleLogInit = false;
@@ -32,5 +35,16 @@ void deinitLogging() {
         WHBLogUdpDeinit();
         udpLogInit = false;
     }
-#endif // DEBUG
 }
+
+#else // DEBUG
+
+#include "logger.h"
+
+void initLogging()
+{}
+
+void deinitLogging()
+{}
+
+#endif // DEBUG

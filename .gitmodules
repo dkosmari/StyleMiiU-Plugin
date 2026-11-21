@@ -1,6 +1,9 @@
 [submodule "external/cafe_glyphs"]
 	path = external/cafe_glyphs
 	url = https://github.com/dkosmari/cafe_glyphs.git
+[submodule "external/glaze"]
+	path = external/glaze
+	url = https://github.com/stephenberry/glaze.git
 [submodule "external/libcontentredirection"]
 	path = external/libcontentredirection
 	url = https://github.com/wiiu-env/libcontentredirection.git
