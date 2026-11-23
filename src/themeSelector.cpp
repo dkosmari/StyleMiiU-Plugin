@@ -7,7 +7,7 @@
 using namespace std::literals;
 
 bool ReplaceContent(const ReplaceParams& args) {
-    const char* layerName = "StyleMiiU /vol/content";
+    const char* layerName = "StyleMiiU";
 
     bool result = false;
 
@@ -18,13 +18,15 @@ bool ReplaceContent(const ReplaceParams& args) {
                                                  target,
                                                  args.contentExtraDir.c_str(),
                                                  FS_LAYER_TYPE_EX_MERGE_DIRECTORY);
-        if (e)
+        if (!e) {
+            result = true;
+            LOG_INFO("Merged: /vol/content with \"%s\"", args.contentExtraDir.c_str());
+        } else {
             LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
                       target,
                       args.contentExtraDir.c_str(),
                       ContentRedirection_GetStatusStr(e));
-        else
-            result = true;
+        }
     }
 
     if (!args.menPack.empty()) {
@@ -34,13 +36,15 @@ bool ReplaceContent(const ReplaceParams& args) {
                                                  target,
                                                  args.menPack.c_str(),
                                                  FS_LAYER_TYPE_EX_REPLACE_FILE);
-        if (e)
+        if (!e) {
+            result = true;
+            LOG_INFO("Replaced Men.pack by \"%s\"", args.menPack.c_str());
+        } else {
             LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
                       target,
                       args.menPack.c_str(),
                       ContentRedirection_GetStatusStr(e));
-        else
-            result = true;
+        }
     }
 
     if (!args.men2Pack.empty()) {
@@ -50,14 +54,15 @@ bool ReplaceContent(const ReplaceParams& args) {
                                                  target,
                                                  args.men2Pack.c_str(),
                                                  FS_LAYER_TYPE_EX_REPLACE_FILE);
-        if (e)
+        if (!e) {
+            result = true;
+            LOG_INFO("Replaced Men2.pack by \"%s\"", args.men2Pack.c_str());
+        } else {
             LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
                       target,
                       args.men2Pack.c_str(),
                       ContentRedirection_GetStatusStr(e));
-        else
-            result = true;
-
+        }
     }
 
     if (!args.cafeBaristaMenBfsar.empty()) {
@@ -67,13 +72,16 @@ bool ReplaceContent(const ReplaceParams& args) {
                                                  target,
                                                  args.cafeBaristaMenBfsar.c_str(),
                                                  FS_LAYER_TYPE_EX_REPLACE_FILE);
-        if (e)
+        if (!e) {
+            result = true;
+            LOG_INFO("Replaced cafe_barista_men.bfsar by \"%s\"",
+                     args.cafeBaristaMenBfsar.c_str());
+        } else {
             LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
                       target,
                       args.cafeBaristaMenBfsar.c_str(),
                       ContentRedirection_GetStatusStr(e));
-        else
-            result = true;
+        }
     }
 
     if (!args.bgmBfstm.empty()) {
@@ -83,13 +91,15 @@ bool ReplaceContent(const ReplaceParams& args) {
                                                  target,
                                                  args.bgmBfstm.c_str(),
                                                  FS_LAYER_TYPE_EX_REPLACE_FILE);
-        if (e)
+        if (!e) {
+            result = true;
+            LOG_INFO("Injected BGM.bfstm from \"%s\"", args.bgmBfstm.c_str());
+        } else {
             LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
                       target,
                       args.bgmBfstm.c_str(),
                       ContentRedirection_GetStatusStr(e));
-        else
-            result = true;
+        }
     }
 
     return result;
