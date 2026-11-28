@@ -9,8 +9,8 @@ struct ReplaceParams {
     std::filesystem::path men2Pack;
     std::filesystem::path cafeBaristaMenBfsar;
     std::filesystem::path bgmBfstm;
-    std::filesystem::path contentExtraDir;
+    std::filesystem::path content;
 };
 
 bool
-ReplaceContent(const ReplaceParams& args);
+ReplaceContent(ReplaceParams& args);

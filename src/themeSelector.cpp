@@ -6,26 +6,27 @@
 
 using namespace std::literals;
 
-bool ReplaceContent(const ReplaceParams& args) {
+bool ReplaceContent(ReplaceParams& args) {
     const char* layerName = "StyleMiiU";
 
     bool result = false;
 
-    if (!args.contentExtraDir.empty()) {
+    if (!args.content.empty()) {
         const char* target = "/vol/content";
         auto e = ContentRedirection_AddFSLayerEx(&gContentLayerHandle,
                                                  layerName,
                                                  target,
-                                                 args.contentExtraDir.c_str(),
+                                                 args.content.c_str(),
                                                  FS_LAYER_TYPE_EX_MERGE_DIRECTORY);
         if (!e) {
             result = true;
-            LOG_INFO("Merged: /vol/content with \"%s\"", args.contentExtraDir.c_str());
+            LOG_INFO("Merged: /vol/content with \"%s\"", args.content.c_str());
         } else {
             LOG_ERROR("Failed to redirect \"%s\" to \"%s\": %s",
                       target,
-                      args.contentExtraDir.c_str(),
+                      args.content.c_str(),
                       ContentRedirection_GetStatusStr(e));
+            args.content.clear();
         }
     }
 
@@ -44,6 +45,7 @@ bool ReplaceContent(const ReplaceParams& args) {
                       target,
                       args.menPack.c_str(),
                       ContentRedirection_GetStatusStr(e));
+            args.menPack.clear();
         }
     }
 
@@ -62,6 +64,7 @@ bool ReplaceContent(const ReplaceParams& args) {
                       target,
                       args.men2Pack.c_str(),
                       ContentRedirection_GetStatusStr(e));
+            args.men2Pack.clear();
         }
     }
 
@@ -81,6 +84,7 @@ bool ReplaceContent(const ReplaceParams& args) {
                       target,
                       args.cafeBaristaMenBfsar.c_str(),
                       ContentRedirection_GetStatusStr(e));
+            args.cafeBaristaMenBfsar.clear();
         }
     }
 
@@ -99,6 +103,7 @@ bool ReplaceContent(const ReplaceParams& args) {
                       target,
                       args.bgmBfstm.c_str(),
                       ContentRedirection_GetStatusStr(e));
+            args.bgmBfstm.clear();
         }
     }
 

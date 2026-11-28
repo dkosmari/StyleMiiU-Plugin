@@ -154,6 +154,7 @@ namespace {
         std::filesystem::path menPack             = {}; // Relative to root/dir.
         std::filesystem::path men2Pack            = {}; // Relative to root/dir.
         std::filesystem::path cafeBaristaMenBfsar = {}; // Relative to root/dir.
+        std::filesystem::path content             = {}; // Relative to root/dir.
 
         PathVec bundledBFSTMFiles = {}; // Relative to root/dir.
         PathVec bundledTTFFiles   = {}; // Relative to root/dir.
@@ -199,6 +200,7 @@ struct glz::meta<ThemeInfo> {
         &T::menPack,
         &T::men2Pack,
         &T::cafeBaristaMenBfsar,
+        &T::content,
         &T::bundledBFSTMFiles,
         &T::bundledTTFFiles,
         &T::preferences
@@ -1089,7 +1091,7 @@ namespace {
             args.menPack             = theme.resolve(themes_root, theme.menPack);
             args.men2Pack            = theme.resolve(themes_root, theme.men2Pack);
             args.cafeBaristaMenBfsar = theme.resolve(themes_root, theme.cafeBaristaMenBfsar);
-            args.contentExtraDir     = theme.resolve(themes_root, theme.dir);
+            args.content             = theme.resolve(themes_root, theme.content);
 
             if (!gCfg.overrideBgm) {
                 LOG_INFO("Using theme BGM preferences.");
@@ -1110,6 +1112,7 @@ namespace {
             PathVec everyMenPack;
             PathVec everyMen2Pack;
             PathVec everyCafeBaristaMenBfsar;
+            PathVec everyContent;
 
             for (const auto& themeName : gCfg.enabledThemes) {
                 auto it = themes.find(themeName);
@@ -1117,21 +1120,29 @@ namespace {
                     continue;
 
                 const auto& theme = it->second;
+
                 everyMenPack.push_back(theme.resolve(themes_root, theme.menPack));
+
                 everyMen2Pack.push_back(theme.resolve(themes_root, theme.men2Pack));
+
                 everyCafeBaristaMenBfsar.push_back(
                     theme.resolve(themes_root, theme.cafeBaristaMenBfsar)
                 );
-            }
 
-            args.contentExtraDir = themes_root / PickRandomItem(gCfg.enabledThemes);
+                everyContent.push_back(theme.resolve(themes_root, theme.content));
+            }
 
             if (!everyMenPack.empty())
                 args.menPack = PickRandomItem(everyMenPack);
+
             if (!everyMen2Pack.empty())
                 args.men2Pack = PickRandomItem(everyMen2Pack);
+
             if (!everyCafeBaristaMenBfsar.empty())
                 args.cafeBaristaMenBfsar = PickRandomItem(everyCafeBaristaMenBfsar);
+
+            if (!everyContent.empty())
+                args.content = PickRandomItem(everyContent);
 
             args.bgmBfstm = PickAnyEnabledBGM();
         }
@@ -1148,7 +1159,7 @@ namespace {
                 gLoaded.men         = args.menPack.parent_path().filename().native();
                 gLoaded.men2        = args.men2Pack.parent_path().filename().native();
                 gLoaded.cafeBarista = args.cafeBaristaMenBfsar.parent_path().filename().native();
-                gLoaded.content     = args.contentExtraDir.filename().native();
+                gLoaded.content     = args.content.filename().native();
             }
 
             // For BGM, show folder and file name.
@@ -1415,10 +1426,11 @@ namespace {
         if (pickedName == specialAsset)
             return pickedName;
 
+        // NOTE: Bundled files have priority over external asset files.
         for (auto& file : bundledFiles) {
             auto name = GetBundledFileName(theme, file);
             if (Equal(name, pickedName))
-                return theme.dir / file;
+                return theme.resolve(themes_root, file);
         }
 
         auto it = assets.find(pickedName);
@@ -1615,6 +1627,10 @@ namespace {
         // Check for special files
         using utils::IgnoreCase::Equal;
         try {
+
+            if (exists(themeEntry.path() / "content"))
+                theme.content = "content";
+
             for (const auto& childEntry :
                      std::filesystem::recursive_directory_iterator{themeEntry}) {
 
@@ -1641,8 +1657,10 @@ namespace {
                     theme.cafeBaristaMenBfsar = relPath;
                 }
 
-                if (Equal(filename, ".bfstm"sv))
+                // NOTE: Ignore BGM_SET_ACS.bfstm.
+                if (Equal(ext, ".bfstm"sv) && !Equal(filename, "BGM_SET_ACS.bfstm"sv)) {
                     theme.bundledBFSTMFiles.push_back(relPath);
+                }
 
                 if (Equal(ext, ".ttf"sv))
                     theme.bundledTTFFiles.push_back(relPath);
@@ -1659,7 +1677,7 @@ namespace {
                     }
 
                 }
-            }
+            } // for each recursive entry
 
         }
         catch (std::exception& e) {
